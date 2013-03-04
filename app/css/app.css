@@ -1,0 +1,22 @@
+body{
+  background-image: url('img/gray_jean.png')
+}
+
+.well{
+  border: 1px solid #ddd;
+  padding: 20px;
+  background: #fff
+}
+
+#ng-view{
+  margin-top: 20px;
+}
+
+#placesList{
+  height: 300px;
+  overflow-y: scroll;
+}
+
+fieldset{
+  margin-top: 0px;
+}

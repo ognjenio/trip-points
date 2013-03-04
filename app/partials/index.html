@@ -1,0 +1,43 @@
+<div class="col_6">
+  <div class="caption">
+    <div ng-init="setMap()" id="mainMap" style="width: 500px; height: 400px;"></div>
+  </div>
+  
+  <br/><br/>
+  
+  <button ng-click="setPath()">Draw current path</button>
+  <button ng-click="seed()">Seed places</button>
+  
+</div>
+<div class="col_6">
+
+  <form ng-submit="addPlace()">
+    <fieldset>
+      <legend>New place</legend>
+      <input type="text" ng-model="placeName" placeholder="Name" class="col_3">
+      <input type="text" ng-model="placeLat"  placeholder="Latitude" class="col_3">
+      <input type="text" ng-model="placeLong" placeholder="Longitude" class="col_3">
+      <button type="submit" class="small blue">Add</button>
+    </fieldset>
+  </form>
+  
+  <br/><br/>
+  
+  <div class="col_12" id="placesList">
+    <fieldset>
+      <legend>Current places</legend>
+      <ol>
+        <li ng-repeat="place in places">
+          {{place.name}}
+          <br/>
+          <small>lat: {{place.hb}}; long: {{place.ib}}</small>
+        </li>
+      </ol>
+    </fieldset>
+  </div>
+  
+  
+  
+</div>
+
+<div class="clearfix"></div>
