@@ -5,8 +5,9 @@
   
   <br/><br/>
   
-  <button ng-click="setPath()">Draw current path</button>
-  <button ng-click="seed()">Seed places</button>
+  <button ng-click="setPath()" class="small">Draw current path</button>
+  <button ng-click="seed()" class="small">Seed places</button>
+  <button ng-click="reset()" class="small red">Reset</button>
   
 </div>
 <div class="col_6">
@@ -14,7 +15,7 @@
   <form ng-submit="addPlace()">
     <fieldset>
       <legend>New place</legend>
-      <input type="text" ng-model="placeName" placeholder="Name" class="col_3">
+      <input type="text" ng-model="placeName" placeholder="Unique name" class="col_3">
       <input type="text" ng-model="placeLat"  placeholder="Latitude" class="col_3">
       <input type="text" ng-model="placeLong" placeholder="Longitude" class="col_3">
       <button type="submit" class="small blue">Add</button>
@@ -23,17 +24,50 @@
   
   <br/><br/>
   
-  <div class="col_12" id="placesList">
-    <fieldset>
-      <legend>Current places</legend>
+  <div class="col_12 column">
+    
+    <ul class="tabs left">
+      <li><a href="#placesList" class="current">Places</a></li>
+      <li><a href="#distances">Distances</a></li>
+    </ul>
+    
+    <div id="distances" class="tab-content">
+      <h5>Distances</h5>
+      <table class="striped tight">
+        <thead>
+          <tr>
+            <td></td>
+            <td ng-repeat="place in places">
+              {{place.name}}
+            </td>
+          </tr>
+        </thead>
+        
+        <tbody>
+          <tr ng-repeat="source in places">
+            <td>{{source.name}}</td>
+            <td ng-repeat="dest in places">
+              {{distances[source.name][dest.name]}}
+            </td>
+          </tr>
+        </tbody>
+        
+      </table>
+    </div>
+    
+    <div id="placesList" class="tab-content">
+      <h5>Places</h5>
       <ol>
         <li ng-repeat="place in places">
           {{place.name}}
           <br/>
-          <small>lat: {{place.hb}}; long: {{place.ib}}</small>
+          <small>lat: {{place.ib}}; long: {{place.jb}}</small>
         </li>
       </ol>
-    </fieldset>
+    </div>
+    
+
+    
   </div>
   
   
