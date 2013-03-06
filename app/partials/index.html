@@ -29,6 +29,7 @@
     <ul class="tabs left">
       <li><a href="#placesList" class="current">Places</a></li>
       <li><a href="#distances">Distances</a></li>
+      <li><a href="#nndistances">NN</a></li>
     </ul>
     
     <div id="distances" class="tab-content">
@@ -59,6 +60,17 @@
       <h5>Places</h5>
       <ol>
         <li ng-repeat="place in places">
+          {{place.name}}
+          <br/>
+          <small>lat: {{place.ib}}; long: {{place.jb}}</small>
+        </li>
+      </ol>
+    </div>
+    
+    <div class="tab-content" id="nndistances">
+      <h5>Nearest neighbor sequence</h5>
+      <ol>
+        <li ng-repeat="place in nnsequence">
           {{place.name}}
           <br/>
           <small>lat: {{place.ib}}; long: {{place.jb}}</small>

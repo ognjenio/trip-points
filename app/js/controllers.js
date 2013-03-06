@@ -11,7 +11,7 @@ function IndexController($scope) {
     
     $scope.places.push(newPlace);
     $scope.placeLat = $scope.placeLong = $scope.placeName = '';
-    $scope.generateDistances();    
+    $scope.generateNN();
   }
   $scope.reset = function(){
     $scope.places = [];
@@ -27,7 +27,6 @@ function IndexController($scope) {
     $scope.map = new google.maps.Map(document.getElementById("mainMap"), mapProp);
   };
   $scope.setPath = function(){
-    $scope.sortPlaces();
     if ($scope.places.length > 0)
     {
       $scope.flightPath = new google.maps.Polyline({
@@ -43,14 +42,52 @@ function IndexController($scope) {
   $scope.seed = function(){
     var x = new google.maps.LatLng(52.395715, 4.888916);
     x.name = "Amsterdam";
+    
     var kl = new google.maps.LatLng(3.1475, 101.693333);
     kl.name = "Kuala Lumpur";
     
+    var l = new google.maps.LatLng(51.507222, -0.1275);
+    l.name = "London";
+    
+    var p = new google.maps.LatLng(48.8567, 2.3508);
+    p.name = "Paris";
+    
+    var q = new google.maps.LatLng(40.4, -3.683333);
+    q.name = "Madrid";
+    
+    var w = new google.maps.LatLng(55.75, 37.616667);
+    w.name = "Moscow";
+    
+    var e = new google.maps.LatLng(28.613889, 77.208889);
+    e.name = "Delhi";
+    
+    var a = new google.maps.LatLng(1.3, 103.8);
+    a.name = "Singapore";
+    
+    var s = new google.maps.LatLng(-6.2, 106.8);
+    s.name = "Jakarta";
+    
+    var d = new google.maps.LatLng(-33.859972, 151.211111);
+    d.name = "Sydney";
+    
+    var z = new google.maps.LatLng(43, -75	);
+    z.name = "New York";
+    
+
+    
     $scope.places.push(x);
     $scope.places.push(kl);
+    $scope.places.push(l);
+    $scope.places.push(p);
+    $scope.places.push(q);
+    $scope.places.push(w);
+    $scope.places.push(e);
+    $scope.places.push(a);
+    $scope.places.push(s);
+    $scope.places.push(d);
+    $scope.places.push(z);
 
-    $scope.generateDistances();
-    
+    $scope.generateNN();
     
     console.log($scope.places);
   };
@@ -61,19 +98,19 @@ function IndexController($scope) {
     {
        for (var i = 0; i < $scope.places.length; i++)
        {
-          var current = $scope.places[i];
-          $scope.distances[current.name] = {}  
+          var c = $scope.places[i];
+          $scope.distances[c.name] = {}  
           for (var j = 0; j < $scope.places.length; j++)
           {
              var destination = $scope.places[j]
-             if (current != destination)
+             if (c != destination)
              {
-                $scope.distances[current.name][destination.name] = 
-                  $scope.calculateDistance(current, destination);
+                $scope.distances[c.name][destination.name] = 
+                  $scope.calculateDistance(c, destination);
              }
           }
        }
-       console.log($scope.distances)
+       console.log("Distances: ", $scope.distances)
     }
     else
     {
@@ -94,17 +131,82 @@ function IndexController($scope) {
             Math.cos($scope.rad(p1.lat())) * Math.cos($scope.rad(p2.lat())) * Math.sin(dLong/2) * Math.sin(dLong/2);
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     var d = R * c;
+    
+    console.log(p1.name, p2.name, d.toFixed(3));
   
     return d.toFixed(3);
   };
   
-  $scope.sortPlaces = function(){
-    // gather all markers on map
-    // build hash of all points with all other points
-    // $scope.adjacency = {i: {i+1: 0, i-1: 0}}   
-    // go through the adjacency and calculate the distance
-    // between point i and all the other points in it's hash
-    // which gives us the adjacency matrix
+  $scope.furthestPoint = function(){
+    var toret = $scope.places[0].name;
+    var toret_val = $scope.places[0].ib;
+    
+    for (var i = 1; i < $scope.places.length; i++)
+    {
+       if ($scope.places[i].ib > toret_val)
+       {
+          toret = $scope.places[i].name;
+          toret_val = $scope.places[i].ib;
+       }
+    }
+    
+    return toret;
+  };
+  
+  $scope.nextPoint = function(current){
+    var temp_distances = $scope.distances[current];
+    
+    var toret = null;
+    var toret_val = null;
+    
+    for (var place in temp_distances){
+      console.log(temp_distances[place]);
+      if (toret == null || (temp_distances[place] < toret_val && $scope.nnsequence.indexOf($scope.findByName(place)) == -1))
+      {
+          toret = place;
+          toret_val = temp_distances[place];
+      }
+    }
+    
+    console.log("Next: ", toret, toret_val);
+    
+    return toret;
+  };
+  
+  $scope.findByName = function(name){
+    for (var i = 0; i < $scope.places.length; i++)
+    {
+      if ($scope.places[i].name == name)
+        return $scope.places[i]
+    }
+  };
+  
+  $scope.generateNN = function(){
+    $scope.generateDistances();
+    if ($scope.places.length > 2)
+    {
+      $scope.nnsequence = []
+      var z = $scope.furthestPoint()
+      
+      var done = false
+      while (!done)
+      {
+        $scope.nnsequence.push($scope.findByName(z));
+        z = $scope.nextPoint(z);
+        
+        if ($scope.nnsequence.length == $scope.places.length)
+        {
+           done = true;
+        } 
+      }
+      
+      console.log($scope.nnsequence);
+      
+    }
+    else
+    {
+      console.log("There aren't enough places.")
+    }
   };
   
 }
