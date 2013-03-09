@@ -93,8 +93,6 @@ function IndexController($scope) {
     var z = new google.maps.LatLng(43, -75	);
     z.name = "New York";
     
-
-    
     $scope.places.push(x);
     $scope.places.push(kl);
     $scope.places.push(l);
@@ -108,8 +106,7 @@ function IndexController($scope) {
     $scope.places.push(z);
 
     $scope.generateNN();
-    
-    console.log($scope.places);
+       
   };
   
   $scope.generateDistances = function(){
@@ -130,11 +127,10 @@ function IndexController($scope) {
              }
           }
        }
-       console.log("Distances: ", $scope.distances)
     }
     else
     {
-      console.log("Not enough places.")
+      console.log("Not enough places.");
     }
     
   };
@@ -240,9 +236,6 @@ function IndexController($scope) {
            z = $scope.nextPoint(z);
         }
       }
-      
-      console.log($scope.nnsequence);
-      
     }
     else
     {
