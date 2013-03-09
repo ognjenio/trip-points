@@ -8,7 +8,7 @@ It has been built on top of Angular seed repo. It might have been an overkill
 but turned out well.
 
 ## Demo
-[Is here.](oregac.github.com/trip-points/index.html)
+[Is here.](http://oregac.github.com/trip-points/index.html)
 
 ## Cloning
 
