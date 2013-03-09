@@ -15,16 +15,23 @@ function IndexController($scope) {
   }
   $scope.reset = function(){
     $scope.places = [];
-    $scope.distances = []; 
+    $scope.distances = [];
+    $scope.nnsequence = [];
     $scope.flightPath.setMap(null);
+    $scope.NNflightPath.setMap(null);
   }
   $scope.setMap = function(){
     var mapProp = {
         center: new google.maps.LatLng(52.395715,4.888916),
-        zoom: 4,
+        zoom: 1,
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
     $scope.map = new google.maps.Map(document.getElementById("mainMap"), mapProp);
+    
+    $(".tabs a").each(function(){
+        $(this).click();
+    });
+    
   };
   $scope.setPath = function(){
     if ($scope.places.length > 0)
@@ -38,6 +45,19 @@ function IndexController($scope) {
       $scope.flightPath.setMap($scope.map);
     }        
   };
+  
+  $scope.setNNPath = function(){
+    if ($scope.nnsequence.length > 0)
+    {
+      $scope.NNflightPath = new google.maps.Polyline({
+        path: $scope.nnsequence,
+        strokeColor: "#FF0000",
+        strokeOpacity: 0.8,
+        strokeWeight: 2
+      });
+      $scope.NNflightPath.setMap($scope.map);
+    }        
+  };  
   
   $scope.seed = function(){
     var x = new google.maps.LatLng(52.395715, 4.888916);
@@ -131,44 +151,58 @@ function IndexController($scope) {
             Math.cos($scope.rad(p1.lat())) * Math.cos($scope.rad(p2.lat())) * Math.sin(dLong/2) * Math.sin(dLong/2);
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     var d = R * c;
-    
-    console.log(p1.name, p2.name, d.toFixed(3));
   
     return d.toFixed(3);
   };
   
   $scope.furthestPoint = function(){
     var toret = $scope.places[0].name;
-    var toret_val = $scope.places[0].ib;
+    var toret_val = $scope.places[0].jb;
     
     for (var i = 1; i < $scope.places.length; i++)
     {
-       if ($scope.places[i].ib > toret_val)
+       if ($scope.places[i].jb > toret_val)
        {
           toret = $scope.places[i].name;
-          toret_val = $scope.places[i].ib;
+          toret_val = $scope.places[i].jb;
        }
     }
     
     return toret;
   };
   
+  $scope.calcPathDistances = function(path){
+    var toret = 0;
+    if (typeof(path) != 'undefined')
+    {
+      for (var i = 0; i < path.length-1; i++)
+      {
+        toret = toret + parseInt($scope.distances[path[i].name][path[i+1].name])
+      }
+    }
+    return toret;
+  };
+  
   $scope.nextPoint = function(current){
-    var temp_distances = $scope.distances[current];
+    var temp_distances = $scope.distances[current];   
     
     var toret = null;
     var toret_val = null;
     
-    for (var place in temp_distances){
-      console.log(temp_distances[place]);
-      if (toret == null || (temp_distances[place] < toret_val && $scope.nnsequence.indexOf($scope.findByName(place)) == -1))
+    for (var next_point in temp_distances)
+    {
+      if (toret == null && $scope.nnsequence.indexOf($scope.findByName(next_point)) == -1)
       {
-          toret = place;
-          toret_val = temp_distances[place];
+        toret = next_point;
+        toret_val = temp_distances[next_point];
+      }
+      
+      if (parseInt(toret_val) > parseInt(temp_distances[next_point]) && $scope.nnsequence.indexOf($scope.findByName(next_point)) == -1)
+      {
+        toret = next_point;
+        toret_val = temp_distances[next_point];
       }
     }
-    
-    console.log("Next: ", toret, toret_val);
     
     return toret;
   };
@@ -191,13 +225,20 @@ function IndexController($scope) {
       var done = false
       while (!done)
       {
-        $scope.nnsequence.push($scope.findByName(z));
-        z = $scope.nextPoint(z);
+        if (z != null)
+        {
+          $scope.nnsequence.push($scope.findByName(z));
+        }
         
-        if ($scope.nnsequence.length == $scope.places.length)
+        
+        if ($scope.nnsequence.length == $scope.places.length || z == null)
         {
            done = true;
         } 
+        else
+        {
+           z = $scope.nextPoint(z);
+        }
       }
       
       console.log($scope.nnsequence);

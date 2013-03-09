@@ -6,6 +6,8 @@
   <br/><br/>
   
   <button ng-click="setPath()" class="small">Draw current path</button>
+  <button ng-click="setNNPath()" class="small">Draw NN path</button>
+  <br/><br/>
   <button ng-click="seed()" class="small">Seed places</button>
   <button ng-click="reset()" class="small red">Reset</button>
   
@@ -27,9 +29,9 @@
   <div class="col_12 column">
     
     <ul class="tabs left">
-      <li><a href="#placesList" class="current">Places</a></li>
+      <li><a href="#placesList" class="active">Places</a></li>
+      <li><a href="#nndistances">Nearest Neighbor</a></li>
       <li><a href="#distances">Distances</a></li>
-      <li><a href="#nndistances">NN</a></li>
     </ul>
     
     <div id="distances" class="tab-content">
@@ -57,7 +59,7 @@
     </div>
     
     <div id="placesList" class="tab-content">
-      <h5>Places</h5>
+      <h5>Places - {{calcPathDistances(places)}}km</h5>
       <ol>
         <li ng-repeat="place in places">
           {{place.name}}
@@ -68,7 +70,7 @@
     </div>
     
     <div class="tab-content" id="nndistances">
-      <h5>Nearest neighbor sequence</h5>
+      <h5>Nearest neighbor sequence - {{calcPathDistances(nnsequence)}}km</h5>
       <ol>
         <li ng-repeat="place in nnsequence">
           {{place.name}}
